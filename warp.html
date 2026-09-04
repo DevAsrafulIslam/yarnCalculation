@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Warp Yarn Calculator</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #222;
+      }
+      .container {
+        max-width: 1100px;
+        margin: auto;
+      }
+      .card {
+        width: 100%;
+        max-width: 1100px;
+        margin: auto;
+        background: #fff;
+        padding: 22px;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px #0001;
+      }
+
+      h1 {
+        text-align: center;
+        margin: 5px 0 22px;
+        font-size: 32px;
+      }
+
+      /* WARP / WEFT BUTTON */
+
+      .yarn-selector {
+        display: flex;
+        gap: 10px;
+        max-width: 850px;
+        margin: 0 auto 22px;
+      }
+
+      .yarn-selector a {
+        flex: 1;
+        padding: 11px 16px;
+        font-size: 18px;
+        font-weight: 700;
+        border-radius: 9px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        border: 2px solid #222;
+        color: #222;
+        background: #fff;
+        transition: 0.2s;
+      }
+
+      .yarn-selector a:hover {
+        background: #f2f2f2;
+      }
+
+      .yarn-selector a.active {
+        background: #222;
+        color: #fff;
+        border-color: #222;
+      }
+
+      .description {
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        padding: 10px 0;
+        margin-bottom: 20px;
+        color: #667085;
+        font-size: 13px;
+      }
+
+      h2 {
+        font-size: 17px;
+        margin: 20px 0 10px;
+      }
+
+      h3 {
+        font-size: 14px;
+        margin: 0 0 12px;
+      }
+
+      .number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #222;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        margin-right: 6px;
+        font-size: 12px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        font-size: 13px;
+        color: #344054;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px 11px;
+        margin-top: 6px;
+        border: 1px solid #d0d5dd;
+        border-radius: 7px;
+        font-size: 15px;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: #222;
+        box-shadow: 0 0 0 2px #2221;
+      }
+
+      .note {
+        font-size: 12px;
+        color: #667085;
+        background: #f8f9fa;
+        border: 1px solid #eaecf0;
+        padding: 9px 11px;
+        border-radius: 7px;
+        margin-top: 8px;
+        line-height: 1.5;
+      }
+
+      .radio {
+        display: flex;
+        gap: 8px;
+        margin: 10px 0;
+      }
+
+      .radio label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid #d0d5dd;
+        border-radius: 7px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .radio input {
+        width: auto;
+        margin: 0;
+      }
+
+      .radio label:has(input:checked) {
+        background: #222;
+        color: white;
+        border-color: #222;
+      }
+
+      .section {
+        background: #fafafa;
+        border: 1px solid #eaecf0;
+        padding: 13px;
+        border-radius: 9px;
+        margin-top: 8px;
+      }
+
+      .calc {
+        width: 100%;
+        margin-top: 20px;
+        padding: 12px;
+        border: 0;
+        border-radius: 8px;
+        background: #222;
+        color: #fff;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .calc:hover {
+        background: #111;
+      }
+
+      .error {
+        color: #b42318;
+        font-weight: bold;
+        margin-top: 12px;
+        font-size: 13px;
+      }
+
+      .ok {
+        background: #e8f7ed;
+        color: #067647;
+        padding: 11px;
+        border-radius: 8px;
+        margin-top: 12px;
+        font-weight: bold;
+        font-size: 13px;
+      }
+
+      .bad {
+        background: #fdeaea;
+        color: #b42318;
+        padding: 11px;
+        border-radius: 8px;
+        margin-top: 12px;
+        font-weight: bold;
+        font-size: 13px;
+      }
+
+      .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 12px;
+      }
+
+      table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 9px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      /* TABLE HEADER SAME AS CALCULATE BUTTON */
+
+      th {
+        background: #222;
+        color: #fff;
+        font-weight: bold;
+      }
+
+      .footer {
+        text-align: center;
+        color: #98a2b3;
+        font-size: 18px;
+        margin-top: 24px;
+        padding-top: 14px;
+        border-top: 1px solid #eee;
+      }
+      .copyright {
+        color: #222;
+      }
+      /* MOBILE */
+
+      @media (max-width: 600px) {
+        body {
+          padding: 8px;
+        }
+
+        .card {
+          padding: 14px;
+          border-radius: 10px;
+        }
+
+        h1 {
+          font-size: 27px;
+          margin-bottom: 18px;
+        }
+
+        .yarn-selector {
+          gap: 8px;
+          margin-bottom: 18px;
+        }
+
+        .yarn-selector a {
+          padding: 10px 12px;
+          font-size: 15px;
+          border-radius: 8px;
+        }
+
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+        }
+
+        h2 {
+          font-size: 16px;
+        }
+
+        input {
+          font-size: 14px;
+          padding: 9px 10px;
+        }
+
+        .radio {
+          flex-wrap: wrap;
+        }
+
+        .radio label {
+          padding: 8px 10px;
+        }
+
+        .calc {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <h1>Yarn Calculator</h1>
+
+      <!-- WARP / WEFT -->
+
+      <div class="yarn-selector">
+        <a href="warp.html" class="active"> Warp Yarn </a>
+
+        <a href="weft.html"> Weft Yarn </a>
+      </div>
+
+      <!-- 1. TE CALCULATION -->
+
+      <!-- <h2>
+        <span class="number">1</span>
+        TE Calculation
+      </h2> -->
+
+      <div class="grid">
+        <div>
+          <label>TE (Optional)</label>
+
+          <input id="te" type="number" step="any" placeholder="e.g. 5536" />
+        </div>
+
+        <div>
+          <label>Reed Space</label>
+
+          <input
+            id="reed"
+            type="number"
+            step="any"
+            placeholder="TE দিলে → Reed Space লাগবে না।"
+          />
+        </div>
+
+        <div>
+          <label>EPI</label>
+
+          <input
+            id="epi"
+            type="number"
+            step="any"
+            placeholder="TE দিলে → EPI লাগবে না।"
+          />
+        </div>
+        <!-- <div class="note">
+          TE থাকলে EPI ও Reed Space খালি রাখা যাবে। TE খালি থাকলে EPI + Reed
+          Space দুটোই দিতে হবে।
+        </div> -->
+        <div class="">
+          <div>
+            <label>Total Ball</label>
+
+            <input id="totalBall" type="number" step="any" value="12" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. TOTAL BALL -->
+
+      <div class="note">
+        Number of Cone = TE ÷ Total Ball. Decimal 0.5 or more হলে +1 হবে।
+      </div>
+
+      <!-- 3. YARN TYPE -->
+
+      <!-- <h2>
+        <span class="number">3</span>
+        Yarn Type
+      </h2> -->
+
+      <div class="radio">
+        <label>
+          <input
+            type="radio"
+            name="mode"
+            value="single"
+            checked
+            onchange="modeChange()"
+          />
+          Single Yarn
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="mode"
+            value="multiple"
+            onchange="modeChange()"
+          />
+          Multiple Yarn
+        </label>
+      </div>
+
+      <!-- SINGLE YARN -->
+
+      <div class="section" id="singleInput">
+        <h3>Single Yarn</h3>
+
+        <div class="grid">
+          <div>
+            <label>Yarn Name</label>
+
+            <input id="singleName" value="10RS" placeholder="10RS" />
+          </div>
+
+          <div>
+            <label>Yarn Count</label>
+
+            <input
+              id="singleCount"
+              type="number"
+              step="any"
+              value="10"
+              placeholder="10"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- MULTIPLE YARN -->
+
+      <div class="section" id="multipleInput" style="display: none">
+        <h3>Multiple Yarn</h3>
+
+        <div class="grid">
+          <div>
+            <label>Yarn Name (comma separated)</label>
+
+            <input id="names" value="10RS,10KW" placeholder="10RS,10KW,12RS" />
+          </div>
+
+          <div>
+            <label>Yarn Count (comma separated)</label>
+
+            <input id="counts" value="10,10" placeholder="10,10,12" />
+          </div>
+        </div>
+
+        <div style="margin-top: 14px">
+          <label>Distribution</label>
+
+          <div class="radio">
+            <label>
+              <input
+                type="radio"
+                name="dist"
+                value="ratio"
+                checked
+                onchange="distChange()"
+              />
+              Ratio
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                name="dist"
+                value="percent"
+                onchange="distChange()"
+              />
+              %
+            </label>
+
+            <!-- Ratio Input -->
+            <div id="ratioBox">
+              <input
+                id="ratio"
+                value="1:2"
+                placeholder="Ratio দিন, যেমন:1:2 বা 2:4:6"
+              />
+            </div>
+
+            <!-- Percentage Input -->
+            <div id="percentBox" style="display: none">
+              <input
+                id="percent"
+                value="33,67"
+                placeholder="Percentage দিন, যেমন: 33,67"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. YARN REQUIREMENT -->
+
+      <!-- <h2>
+        <span class="number">4</span>
+        Yarn Requirement
+      </h2> -->
+
+      <div class="grid">
+        <div>
+          <label>Fabric Length (Meter)</label>
+
+          <input id="fabric" type="number" step="any" value="1000" />
+        </div>
+
+        <div>
+          <label>Wastage (Meter)</label>
+
+          <input id="wastage" type="number" step="any" value="500" />
+        </div>
+      </div>
+
+      <!-- CALCULATE -->
+
+      <button class="calc" onclick="calculate()">CALCULATE</button>
+
+      <div id="error" class="error"></div>
+
+      <!-- RESULT -->
+
+      <div id="result" style="display: none">
+        <h2>Final Result</h2>
+
+        <div id="coneStatus"></div>
+
+        <div class="table-wrap">
+          <table>
+            <thead id="thead"></thead>
+
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">
+        © <span class="copyright">Asraful Islam</span> | All Rights Reserved.
+      </div>
+    </div>
+
+    <script>
+      function roundHalfUp(x) {
+        return Math.floor(x + 0.5);
+      }
+
+      function vals(s) {
+        return s
+          .split(",")
+          .map((x) => x.trim())
+          .filter((x) => x !== "");
+      }
+
+      function modeChange() {
+        const mode = document.querySelector('input[name="mode"]:checked').value;
+
+        document.getElementById("singleInput").style.display =
+          mode === "single" ? "block" : "none";
+
+        document.getElementById("multipleInput").style.display =
+          mode === "multiple" ? "block" : "none";
+      }
+
+      function distChange() {
+        const dist = document.querySelector('input[name="dist"]:checked').value;
+
+        document.getElementById("ratioBox").style.display =
+          dist === "ratio" ? "block" : "none";
+
+        document.getElementById("percentBox").style.display =
+          dist === "percent" ? "block" : "none";
+      }
+
+      function calculate() {
+        const error = document.getElementById("error");
+
+        error.textContent = "";
+
+        const teInput = document.getElementById("te").value.trim();
+
+        const reedInput = document.getElementById("reed").value.trim();
+
+        const epiInput = document.getElementById("epi").value.trim();
+
+        const reed = reedInput === "" ? null : Number(reedInput);
+
+        const epi = epiInput === "" ? null : Number(epiInput);
+
+        const total = Number(document.getElementById("totalBall").value);
+
+        const fabric = Number(document.getElementById("fabric").value);
+
+        const wastage = Number(document.getElementById("wastage").value);
+
+        if (!total || !fabric || wastage < 0) {
+          error.textContent =
+            "Total Ball, Fabric Length এবং Wastage সঠিকভাবে দিন।";
+
+          return;
+        }
+
+        let TE;
+
+        if (teInput !== "") {
+          TE = Number(teInput);
+
+          if (!Number.isFinite(TE) || TE <= 0) {
+            error.textContent = "TE সঠিকভাবে দিন।";
+
+            return;
+          }
+        } else {
+          if (reedInput === "" || epiInput === "") {
+            error.textContent =
+              "TE না থাকলে EPI এবং Reed Space দুটোই দিতে হবে।";
+
+            return;
+          }
+
+          if (
+            !Number.isFinite(reed) ||
+            reed <= 0 ||
+            !Number.isFinite(epi) ||
+            epi <= 0
+          ) {
+            error.textContent = "Reed Space এবং EPI সঠিকভাবে দিন।";
+
+            return;
+          }
+
+          TE = reed * epi;
+        }
+
+        const cone = roundHalfUp(TE / total);
+
+        let names = [];
+        let counts = [];
+        let pct = [];
+        let distribution = [];
+
+        const type = document.querySelector('input[name="mode"]:checked').value;
+
+        /* SINGLE YARN */
+
+        if (type === "single") {
+          const name = document.getElementById("singleName").value.trim();
+
+          const count = Number(document.getElementById("singleCount").value);
+
+          if (!name || !count || count <= 0) {
+            error.textContent = "Single Yarn-এর Name এবং Count দিন।";
+
+            return;
+          }
+
+          names = [name];
+          counts = [count];
+          pct = [100];
+        } else {
+          /* MULTIPLE YARN */
+          names = vals(document.getElementById("names").value);
+
+          counts = vals(document.getElementById("counts").value).map(Number);
+
+          if (!names.length || names.length !== counts.length) {
+            error.textContent = `Yarn Name ${names.length}টি এবং Count ${counts.length}টি। দুইটার সংখ্যা একই হতে হবে।`;
+
+            return;
+          }
+
+          if (counts.some((x) => !Number.isFinite(x) || x <= 0)) {
+            error.textContent = "Count-এ শুধু valid number দিন।";
+
+            return;
+          }
+
+          const dist = document.querySelector(
+            'input[name="dist"]:checked',
+          ).value;
+
+          if (dist === "ratio") {
+            distribution = document
+              .getElementById("ratio")
+              .value.trim()
+              .split(":")
+              .map(Number);
+
+            if (
+              distribution.length !== names.length ||
+              distribution.some((x) => !Number.isFinite(x) || x <= 0)
+            ) {
+              error.textContent =
+                "Ratio-এর সংখ্যা Yarn-এর সংখ্যার সমান হতে হবে।";
+
+              return;
+            }
+
+            const sum = distribution.reduce((a, b) => a + b, 0);
+
+            pct = distribution.map((x) => (x / sum) * 100);
+          } else {
+            pct = vals(document.getElementById("percent").value).map(Number);
+
+            if (
+              pct.length !== names.length ||
+              pct.some((x) => !Number.isFinite(x) || x < 0)
+            ) {
+              error.textContent =
+                "Percentage-এর সংখ্যা Yarn-এর সংখ্যার সমান হতে হবে।";
+
+              return;
+            }
+
+            const sum = pct.reduce((a, b) => a + b, 0);
+
+            if (Math.abs(sum - 100) > 0.01) {
+              error.textContent = `Percentage total 100% হতে হবে। এখন ${sum.toFixed(2)}%`;
+
+              return;
+            }
+
+            distribution = pct;
+          }
+        }
+
+        /* CONE STATUS */
+
+        const st = document.getElementById("coneStatus");
+
+        if (cone >= 340 && cone <= 480) {
+          st.className = "ok";
+
+          st.textContent = `✓ Cone ${cone} — 340–480 limit-এর মধ্যে।`;
+        } else {
+          st.className = "bad";
+
+          st.textContent = `✗ Cone ${cone} — 340–480 limit-এর বাইরে।`;
+        }
+
+        const thead = document.getElementById("thead");
+
+        const tbody = document.getElementById("tbody");
+
+        tbody.innerHTML = "";
+
+        /* SINGLE RESULT */
+
+        if (type === "single") {
+          thead.innerHTML = `
+          <tr>
+            <th>Yarn</th>
+            <th>Count</th>
+            <th>Ball</th>
+            <th>Number of Cone</th>
+            <th>Yarn Length (m)</th>
+            <th>Yarn KG</th>
+            <th>Gram</th>
+          </tr>
+        `;
+
+          const ball = roundHalfUp(total);
+
+          const yarnLength = fabric * ball + wastage;
+
+          const constant = 0.00059;
+
+          const kg = (yarnLength * cone * constant) / counts[0];
+
+          const gram = kg / cone;
+
+          tbody.innerHTML = `
+          <tr>
+
+            <td>
+              <b>${names[0]}</b>
+            </td>
+
+            <td>
+              ${counts[0]}
+            </td>
+
+            <td>
+              <b>${ball}</b>
+            </td>
+
+            <td>
+              ${cone}
+            </td>
+
+            <td>
+              ${yarnLength.toFixed(2)}
+            </td>
+
+            <td>
+              ${kg.toFixed(3)}
+            </td>
+
+            <td>
+              <b>${gram.toFixed(2)} g</b>
+            </td>
+
+          </tr>
+        `;
+        } else {
+          /* MULTIPLE RESULT */
+          thead.innerHTML = `
+          <tr>
+            <th>Yarn</th>
+            <th>Count</th>
+            <th>Value %</th>
+            <th>Ball</th>
+            <th>Cone/Pcs</th>
+            <th>Yarn Length (m)</th>
+            <th>Yarn KG</th>
+            <th>Gram</th>
+          </tr>
+        `;
+
+          const constant = 0.00059;
+
+          names.forEach((name, i) => {
+            const ball = roundHalfUp((total * pct[i]) / 100);
+
+            const yarnLength = fabric * ball + wastage;
+
+            const kg = (yarnLength * cone * constant) / counts[i];
+
+            const gram = kg / cone;
+
+            tbody.innerHTML += `
+              <tr>
+
+                <td>
+                  <b>${name}</b>
+                </td>
+
+                <td>
+                  ${counts[i]}
+                </td>
+
+                <td>
+                  ${pct[i].toFixed(2)}%
+                </td>
+
+                <td>
+                  <b>${ball}</b>
+                </td>
+
+                <td>
+                  ${cone}
+                </td>
+
+                <td>
+                  ${yarnLength.toFixed(2)}
+                </td>
+
+                <td>
+                  ${kg.toFixed(3)}
+                </td>
+
+                <td>
+                  <b>${gram.toFixed(2)} g</b>
+                </td>
+
+              </tr>
+            `;
+          });
+        }
+
+        document.getElementById("result").style.display = "block";
+      }
+
+      modeChange();
+      distChange();
+    </script>
+  </body>
+</html>

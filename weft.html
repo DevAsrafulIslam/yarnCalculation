@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Weft Yarn Calculator</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #222;
+      }
+
+      .container {
+        max-width: 1100px;
+        border: 1px;
+        margin: auto;
+      }
+
+      .header {
+        width: 100%;
+        max-width: 1100px;
+        margin: auto;
+        background: #fff;
+        padding: 22px;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px #0001;
+      }
+
+      .header h1 {
+        text-align: center;
+        margin: 5px 0 22px;
+        font-size: 32px;
+      }
+
+      /* Top Buttons */
+      .top-buttons {
+        display: flex;
+        gap: 10px;
+        max-width: 850px;
+        margin: 0 auto 22px;
+      }
+
+      .top-buttons a {
+        flex: 1;
+        padding: 11px 16px;
+        font-size: 18px;
+        font-weight: 700;
+        border-radius: 9px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        border: 2px solid #222;
+        color: #222;
+        background: #fff;
+        transition: 0.2s;
+      }
+
+      .top-buttons a:hover {
+        background: #eee;
+      }
+
+      .top-buttons a.active {
+        background: #222;
+        color: white;
+        border-color: #222;
+      }
+
+      .card {
+        width: 100%;
+        max-width: 1100px;
+        margin: auto;
+        background: #fff;
+        padding: 22px;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px #0001;
+      }
+
+      .card h2 {
+        margin-top: 0;
+        font-size: 20px;
+        margin-bottom: 18px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      .full {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 7px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #ccc;
+        border-radius: 7px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: #555;
+      }
+
+      .radio {
+        display: flex;
+        gap: 20px;
+        margin-top: 8px;
+      }
+
+      .radio label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      .radio input {
+        width: auto;
+      }
+
+      .note {
+        font-size: 12px;
+        color: #666;
+        margin-top: 6px;
+        line-height: 1.5;
+      }
+
+      .formula-box {
+        background: #f7f7f7;
+        border-left: 4px solid #333;
+        padding: 13px;
+        border-radius: 5px;
+        margin-top: 18px;
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .formula-box strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .calculate-btn {
+        width: 100%;
+        border: none;
+        background: #222;
+        color: white;
+        padding: 13px;
+        border-radius: 7px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 18px;
+      }
+
+      .calculate-btn:hover {
+        background: #444;
+      }
+
+      .error {
+        color: #c62828;
+        background: #ffebee;
+        border: 1px solid #ffcdd2;
+        padding: 10px 12px;
+        border-radius: 6px;
+        margin-top: 15px;
+        display: none;
+        font-size: 13px;
+      }
+
+      .result-section {
+        margin-top: 20px;
+      }
+
+      .result-section h2 {
+        margin-bottom: 15px;
+      }
+
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 9px 8px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      th {
+        background: #222;
+        color: white;
+        font-weight: 600;
+      }
+
+      tr:nth-child(even) {
+        background: #fafafa;
+      }
+
+      .total-row {
+        font-weight: bold;
+        background: #eee !important;
+      }
+
+      .single-result {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 15px;
+      }
+
+      .result-box {
+        background: #f7f7f7;
+        border: 1px solid #ddd;
+        border-radius: 7px;
+        padding: 15px;
+        text-align: center;
+      }
+
+      .result-box .title {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .result-box .value {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 8px;
+        }
+
+        .card {
+          padding: 14px;
+          border-radius: 10px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .full {
+          grid-column: auto;
+        }
+
+        .single-result {
+          grid-template-columns: 1fr;
+        }
+
+        /* .header h1 {
+          font-size: 23px;
+        } */
+        h1 {
+          font-size: 27px;
+          margin-bottom: 18px;
+        }
+        .top-buttons {
+          gap: 8px;
+          margin-bottom: 18px;
+        }
+
+        .top-buttons a {
+          padding: 10px 12px;
+          font-size: 15px;
+          border-radius: 8px;
+        }
+        /* .top-buttons a {
+          padding: 6px 11px;
+          font-size: 12px;
+        } */
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>Yarn Calculator</h1>
+
+        <div class="top-buttons">
+          <a href="warp.html">Warp Yarn</a>
+          <a href="weft.html" class="active">Weft Yarn</a>
+        </div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="card">
+        <h2>Basic Information</h2>
+
+        <div class="grid">
+          <div>
+            <label for="pick">Pick</label>
+            <input
+              type="number"
+              id="pick"
+              placeholder="Enter Pick"
+              step="any"
+            />
+          </div>
+
+          <div>
+            <label for="rs">RS</label>
+            <input type="number" id="rs" placeholder="Enter RS" step="any" />
+          </div>
+
+          <div>
+            <label for="fabricLength">Fabric Length (Meter)</label>
+            <input
+              type="number"
+              id="fabricLength"
+              value="800"
+              placeholder="Enter Fabric Length"
+              step="any"
+            />
+          </div>
+
+          <div>
+            <label for="yarnType">Yarn Type</label>
+
+            <select id="yarnType" onchange="changeYarnType()">
+              <option value="single">Single Yarn</option>
+              <option value="multiple">Multiple Yarn</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Single Yarn -->
+      <div class="card" id="singleSection">
+        <h2>Single Yarn</h2>
+
+        <div class="grid">
+          <div>
+            <label for="singleName">Yarn Name</label>
+            <input
+              type="text"
+              id="singleName"
+              value="16S"
+              placeholder="Example: 16S"
+            />
+          </div>
+
+          <div>
+            <label for="singleCount">Yarn Count</label>
+            <input
+              type="number"
+              id="singleCount"
+              value="16"
+              placeholder="Example: 16"
+              step="any"
+            />
+          </div>
+        </div>
+
+        <!-- <div class="formula-box">
+          <strong>Single Weft Formula:</strong>
+
+          Yarn KG = Length × Pick × (RS + 3) / (840 × Count)
+
+          <br />
+
+          Yarn Length = Fabric Length × Pick
+        </div> -->
+
+        <button class="calculate-btn" onclick="calculateSingle()">
+          Calculate Single Yarn
+        </button>
+
+        <div id="singleError" class="error"></div>
+
+        <div id="singleResult" class="result-section hidden">
+          <h2>Calculation Result</h2>
+
+          <div class="single-result">
+            <div class="result-box">
+              <div class="title">Yarn Length</div>
+              <div class="value" id="singleYarnLength">0</div>
+            </div>
+
+            <div class="result-box">
+              <div class="title">Yarn KG</div>
+              <div class="value" id="singleKG">0</div>
+            </div>
+
+            <div class="result-box">
+              <div class="title">Gram</div>
+              <div class="value" id="singleGram">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multiple Yarn -->
+      <div class="card hidden" id="multipleSection">
+        <h2>Multiple Yarn</h2>
+
+        <div class="grid">
+          <div>
+            <label for="names"> Yarn Name (comma separated) </label>
+
+            <input
+              type="text"
+              id="names"
+              value="16S,12S"
+              placeholder="16S,12S,10S"
+            />
+
+            <div class="note">Example: 16S,12S</div>
+          </div>
+
+          <div>
+            <label for="counts"> Yarn Count (comma separated) </label>
+
+            <input
+              type="text"
+              id="counts"
+              value="16,12"
+              placeholder="16,12,10"
+            />
+
+            <div class="note">Example: 16,12</div>
+          </div>
+        </div>
+
+        <!-- Distribution Type -->
+        <h3 style="margin-top: 20px">Distribution Type</h3>
+
+        <div class="radio">
+          <label>
+            <input
+              type="radio"
+              name="distribution"
+              value="ratio"
+              checked
+              onchange="distributionChange()"
+            />
+            Ratio
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="distribution"
+              value="percentage"
+              onchange="distributionChange()"
+            />
+            Percentage
+          </label>
+        </div>
+
+        <!-- Ratio -->
+        <div id="ratioInput" style="margin-top: 15px">
+          <label for="ratio"> Ratio (comma separated) </label>
+
+          <input type="text" id="ratio" value="1,2" placeholder="1,2,3" />
+
+          <div class="note">
+            Example: 1,2 or 2,4,6
+            <br />
+            Ratio automatically converts into percentage.
+          </div>
+        </div>
+
+        <!-- Percentage -->
+        <div id="percentageInput" style="display: none; margin-top: 15px">
+          <label for="percentage"> Percentage (comma separated) </label>
+
+          <input
+            type="text"
+            id="percentage"
+            value="30,70"
+            placeholder="30,70,20"
+          />
+
+          <div class="note">
+            Example: 30,70 or 20,30,50
+            <br />
+            Total Percentage must be 100%.
+          </div>
+        </div>
+
+        <!-- Formula -->
+        <!-- <div class="formula-box">
+          <strong>Multiple Weft Formula:</strong>
+
+          Result = Pick × Percentage / 100
+
+          <br />
+
+          Yarn Length = Fabric Length × Result
+
+          <br />
+
+          Yarn KG = Result × Fabric Length × 36 × (RS + 3) / (840 × Count ×
+          2.2046 × 36)
+        </div> -->
+
+        <button class="calculate-btn" onclick="calculateMultiple()">
+          Calculate Multiple Yarn
+        </button>
+
+        <div id="multipleError" class="error"></div>
+
+        <!-- Multiple Result -->
+        <div id="multipleResult" class="result-section hidden">
+          <h2>Calculation Result</h2>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Yarn</th>
+                  <th>Count</th>
+                  <th>Ratio</th>
+                  <th>Percentage</th>
+                  <th>Result</th>
+                  <th>Fabric Length</th>
+                  <th>Yarn Length</th>
+                  <th>Yarn KG</th>
+                  <th>Gram</th>
+                </tr>
+              </thead>
+
+              <tbody id="multipleTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* ==============================
+       COMMON FUNCTIONS
+    ============================== */
+
+      function vals(value) {
+        return value
+          .split(",")
+          .map((item) => item.trim())
+          .filter((item) => item !== "");
+      }
+
+      function showError(element, message) {
+        element.textContent = message;
+        element.style.display = "block";
+      }
+
+      function hideError(element) {
+        element.textContent = "";
+        element.style.display = "none";
+      }
+
+      /* ==============================
+       YARN TYPE CHANGE
+    ============================== */
+
+      function changeYarnType() {
+        const yarnType = document.getElementById("yarnType").value;
+
+        const singleSection = document.getElementById("singleSection");
+
+        const multipleSection = document.getElementById("multipleSection");
+
+        if (yarnType === "single") {
+          singleSection.classList.remove("hidden");
+          multipleSection.classList.add("hidden");
+        } else {
+          singleSection.classList.add("hidden");
+          multipleSection.classList.remove("hidden");
+        }
+      }
+
+      /* ==============================
+       DISTRIBUTION TYPE CHANGE
+    ============================== */
+
+      function distributionChange() {
+        const distribution = document.querySelector(
+          'input[name="distribution"]:checked',
+        ).value;
+
+        const ratioInput = document.getElementById("ratioInput");
+
+        const percentageInput = document.getElementById("percentageInput");
+
+        if (distribution === "ratio") {
+          ratioInput.style.display = "block";
+          percentageInput.style.display = "none";
+        } else {
+          ratioInput.style.display = "none";
+          percentageInput.style.display = "block";
+        }
+      }
+
+      /* ==============================
+       SINGLE YARN CALCULATION
+    ============================== */
+
+      function calculateSingle() {
+        const error = document.getElementById("singleError");
+
+        hideError(error);
+
+        const pick = parseFloat(document.getElementById("pick").value);
+
+        const rs = parseFloat(document.getElementById("rs").value);
+
+        const fabric = parseFloat(
+          document.getElementById("fabricLength").value,
+        );
+
+        const count = parseFloat(document.getElementById("singleCount").value);
+
+        /* Validation */
+
+        if (!Number.isFinite(pick) || pick <= 0) {
+          showError(error, "Please enter a valid Pick.");
+          return;
+        }
+
+        if (!Number.isFinite(rs) || rs < 0) {
+          showError(error, "Please enter a valid RS.");
+          return;
+        }
+
+        if (!Number.isFinite(fabric) || fabric <= 0) {
+          showError(error, "Please enter a valid Fabric Length.");
+          return;
+        }
+
+        if (!Number.isFinite(count) || count <= 0) {
+          showError(error, "Please enter a valid Yarn Count.");
+          return;
+        }
+
+        /*
+        SINGLE FORMULA
+
+        Yarn KG =
+        Length × Pick × (RS + 3)
+        / (840 × Count)
+
+        Here:
+
+        Length = Fabric Length
+      */
+
+        const yarnLength = fabric * pick;
+
+        const yarnKG = (fabric * pick * (rs + 3)) / (840 * count);
+
+        const gram = yarnKG * 1000;
+
+        /* Display */
+
+        document.getElementById("singleYarnLength").textContent =
+          yarnLength.toFixed(2);
+
+        document.getElementById("singleKG").textContent = yarnKG.toFixed(4);
+
+        document.getElementById("singleGram").textContent = gram.toFixed(2);
+
+        document.getElementById("singleResult").classList.remove("hidden");
+      }
+
+      /* ==============================
+       MULTIPLE YARN CALCULATION
+    ============================== */
+
+      function calculateMultiple() {
+        const error = document.getElementById("multipleError");
+
+        hideError(error);
+
+        /* Basic Values */
+
+        const pick = parseFloat(document.getElementById("pick").value);
+
+        const rs = parseFloat(document.getElementById("rs").value);
+
+        const fabric = parseFloat(
+          document.getElementById("fabricLength").value,
+        );
+
+        /* Validation */
+
+        if (!Number.isFinite(pick) || pick <= 0) {
+          showError(error, "Please enter a valid Pick.");
+          return;
+        }
+
+        if (!Number.isFinite(rs) || rs < 0) {
+          showError(error, "Please enter a valid RS.");
+          return;
+        }
+
+        if (!Number.isFinite(fabric) || fabric <= 0) {
+          showError(error, "Please enter a valid Fabric Length.");
+          return;
+        }
+
+        /* Yarn Names */
+
+        const names = vals(document.getElementById("names").value);
+
+        /* Yarn Counts */
+
+        const counts = vals(document.getElementById("counts").value).map(
+          Number,
+        );
+
+        if (names.length === 0) {
+          showError(error, "Please enter Yarn Name.");
+
+          return;
+        }
+
+        if (names.length !== counts.length) {
+          showError(error, "Yarn Name এবং Yarn Count-এর সংখ্যা সমান হতে হবে.");
+
+          return;
+        }
+
+        if (counts.some((count) => !Number.isFinite(count) || count <= 0)) {
+          showError(error, "Yarn Count-এ valid number দিন.");
+
+          return;
+        }
+
+        /* ==============================
+         DISTRIBUTION
+      ============================== */
+
+        const distribution = document.querySelector(
+          'input[name="distribution"]:checked',
+        ).value;
+
+        let percentages = [];
+        let ratios = [];
+
+        /* ==============================
+         RATIO MODE
+      ============================== */
+
+        if (distribution === "ratio") {
+          ratios = vals(document.getElementById("ratio").value).map(Number);
+
+          if (ratios.length !== names.length) {
+            showError(error, "Ratio-এর সংখ্যা Yarn-এর সংখ্যার সমান হতে হবে.");
+
+            return;
+          }
+
+          if (ratios.some((value) => !Number.isFinite(value) || value <= 0)) {
+            showError(error, "Ratio-তে valid positive number দিন.");
+
+            return;
+          }
+
+          const ratioSum = ratios.reduce((total, value) => total + value, 0);
+
+          percentages = ratios.map((ratio) => (ratio / ratioSum) * 100);
+        } else {
+          /* ==============================
+         PERCENTAGE MODE
+      ============================== */
+          percentages = vals(document.getElementById("percentage").value).map(
+            Number,
+          );
+
+          if (percentages.length !== names.length) {
+            showError(
+              error,
+              "Percentage-এর সংখ্যা Yarn-এর সংখ্যার সমান হতে হবে.",
+            );
+
+            return;
+          }
+
+          if (
+            percentages.some((value) => !Number.isFinite(value) || value <= 0)
+          ) {
+            showError(error, "Percentage-তে valid positive number দিন.");
+
+            return;
+          }
+
+          const percentageSum = percentages.reduce(
+            (total, value) => total + value,
+            0,
+          );
+
+          if (Math.abs(percentageSum - 100) > 0.001) {
+            showError(
+              error,
+              `Percentage-এর total 100% হতে হবে। এখন ${percentageSum}%`,
+            );
+
+            return;
+          }
+
+          /*
+          Percentage mode-এ
+          Ratio থাকবে না
+        */
+
+          ratios = names.map(() => null);
+        }
+
+        /* ==============================
+         TABLE
+      ============================== */
+
+        const tableBody = document.getElementById("multipleTableBody");
+
+        tableBody.innerHTML = "";
+
+        let totalKG = 0;
+
+        names.forEach((name, index) => {
+          const count = counts[index];
+
+          const percentage = percentages[index];
+
+          /*
+            Result =
+            Pick × Percentage / 100
+          */
+
+          const result = (pick * percentage) / 100;
+
+          /*
+            Yarn Length =
+            Fabric Length × Result
+          */
+
+          const yarnLength = fabric * result;
+
+          /*
+            MULTIPLE FORMULA
+
+            Yarn KG =
+            Result × Fabric Length × 36 × (RS + 3)
+            /
+            (840 × Count × 2.2046 × 36)
+          */
+
+          const yarnKG =
+            (result * fabric * 36 * (rs + 3)) / (840 * count * 2.2046 * 36);
+
+          const gram = yarnKG * 1000;
+
+          totalKG += yarnKG;
+
+          const row = document.createElement("tr");
+
+          /* Yarn */
+
+          const yarnCell = document.createElement("td");
+
+          yarnCell.textContent = name;
+
+          row.appendChild(yarnCell);
+
+          /* Count */
+
+          const countCell = document.createElement("td");
+
+          countCell.textContent = count;
+
+          row.appendChild(countCell);
+
+          /* Ratio */
+
+          const ratioCell = document.createElement("td");
+
+          if (distribution === "ratio") {
+            ratioCell.textContent = ratios[index];
+          } else {
+            ratioCell.textContent = "-";
+          }
+
+          row.appendChild(ratioCell);
+
+          /* Percentage */
+
+          const percentageCell = document.createElement("td");
+
+          percentageCell.textContent = percentage.toFixed(2) + "%";
+
+          row.appendChild(percentageCell);
+
+          /* Result */
+
+          const resultCell = document.createElement("td");
+
+          resultCell.textContent = result.toFixed(2);
+
+          row.appendChild(resultCell);
+
+          /* Fabric Length */
+
+          const fabricCell = document.createElement("td");
+
+          fabricCell.textContent = fabric.toFixed(2);
+
+          row.appendChild(fabricCell);
+
+          /* Yarn Length */
+
+          const lengthCell = document.createElement("td");
+
+          lengthCell.textContent = yarnLength.toFixed(2);
+
+          row.appendChild(lengthCell);
+
+          /* Yarn KG */
+
+          const kgCell = document.createElement("td");
+
+          kgCell.textContent = yarnKG.toFixed(4);
+
+          row.appendChild(kgCell);
+
+          /* Gram */
+
+          const gramCell = document.createElement("td");
+
+          gramCell.textContent = gram.toFixed(2);
+
+          row.appendChild(gramCell);
+
+          tableBody.appendChild(row);
+        });
+
+        /* ==============================
+         TOTAL ROW
+      ============================== */
+
+        const totalGram = totalKG * 1000;
+
+        const totalRow = document.createElement("tr");
+
+        totalRow.className = "total-row";
+
+        totalRow.innerHTML = `
+
+        <td colspan="7">
+          TOTAL
+        </td>
+
+        <td>
+          ${totalKG.toFixed(4)}
+        </td>
+
+        <td>
+          ${totalGram.toFixed(2)}
+        </td>
+
+      `;
+
+        tableBody.appendChild(totalRow);
+
+        document.getElementById("multipleResult").classList.remove("hidden");
+      }
+
+      /* ==============================
+       INITIAL SETUP
+    ============================== */
+
+      changeYarnType();
+      distributionChange();
+    </script>
+  </body>
+</html>
