@@ -7,314 +7,440 @@
     <title>Warp Yarn Calculator</title>
 
     <style>
+      :root {
+        --ink: #17211b;
+        --muted: #6b776f;
+        --line: #d9e1dc;
+        --paper: #ffffff;
+        --wash: #f2f6f1;
+        --accent: #28724f;
+        --accent-dark: #1c5239;
+        --accent-soft: #e4f0e8;
+        --danger: #b42318;
+        --shadow: 0 24px 60px rgba(34, 62, 45, 0.12);
+      }
+
       * {
         box-sizing: border-box;
       }
 
+      @keyframes pageEnter {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       body {
+        min-width: 320px;
         margin: 0;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-        background: #f4f6f8;
-        color: #222;
+        padding: 32px 20px;
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 10% 0%, #e3efe5, transparent 32%),
+          var(--wash);
+        color: var(--ink);
+        animation: pageEnter 0.45s ease-out both;
       }
-      .container {
-        max-width: 1100px;
-        margin: auto;
+
+      @media (prefers-reduced-motion: reduce) {
+        body {
+          animation: none;
+        }
       }
+
       .card {
-        width: 100%;
-        max-width: 1100px;
+        width: min(1120px, 100%);
         margin: auto;
-        background: #fff;
-        padding: 22px;
-        border-radius: 14px;
-        box-shadow: 0 4px 18px #0001;
+        padding: clamp(22px, 4vw, 48px);
+        background: var(--paper);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
       }
 
       h1 {
+        margin: 0;
+        color: var(--ink);
+        font-family: Georgia, serif;
+        font-size: clamp(32px, 5vw, 54px);
+        letter-spacing: -1.5px;
+        line-height: 1;
         text-align: center;
-        margin: 5px 0 22px;
-        font-size: 32px;
       }
 
-      /* WARP / WEFT BUTTON */
+      .card::before {
+        display: block;
+        width: 52px;
+        height: 4px;
+        margin: 0 auto 18px;
+        border-radius: 99px;
+        background: var(--accent);
+        content: "";
+      }
 
       .yarn-selector {
         display: flex;
-        gap: 10px;
-        max-width: 850px;
-        margin: 0 auto 22px;
+        gap: 8px;
+        max-width: 640px;
+        margin: 28px auto 34px;
+        padding: 5px;
+        background: #edf2ed;
+        border: 1px solid var(--line);
+        border-radius: 12px;
       }
 
       .yarn-selector a {
         flex: 1;
-        padding: 11px 16px;
-        font-size: 18px;
+        padding: 12px 16px;
+        color: var(--muted);
+        border-radius: 8px;
+        font-size: 14px;
         font-weight: 700;
-        border-radius: 9px;
-        cursor: pointer;
         text-align: center;
         text-decoration: none;
-        border: 2px solid #222;
-        color: #222;
-        background: #fff;
-        transition: 0.2s;
+        transition: 0.2s ease;
       }
 
       .yarn-selector a:hover {
-        background: #f2f2f2;
+        color: var(--ink);
+        background: #fff;
       }
 
       .yarn-selector a.active {
-        background: #222;
         color: #fff;
-        border-color: #222;
-      }
-
-      .description {
-        border-top: 1px solid #eee;
-        border-bottom: 1px solid #eee;
-        padding: 10px 0;
-        margin-bottom: 20px;
-        color: #667085;
-        font-size: 13px;
+        background: var(--accent);
+        box-shadow: 0 5px 12px rgba(40, 114, 79, 0.22);
       }
 
       h2 {
-        font-size: 17px;
-        margin: 20px 0 10px;
+        margin: 34px 0 14px;
+        font-size: 21px;
+        letter-spacing: -0.3px;
       }
 
       h3 {
-        font-size: 14px;
-        margin: 0 0 12px;
-      }
-
-      .number {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: #222;
-        color: white;
-        width: 24px;
-        height: 24px;
-        border-radius: 6px;
-        margin-right: 6px;
-        font-size: 12px;
+        margin: 0 0 16px;
+        color: var(--accent-dark);
+        font-size: 15px;
+        letter-spacing: 0.2px;
+        text-transform: uppercase;
       }
 
       .grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
       }
 
       label {
         display: block;
-        font-weight: bold;
-        font-size: 13px;
-        color: #344054;
+        color: #405048;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
       }
 
       input {
         width: 100%;
-        padding: 10px 11px;
-        margin-top: 6px;
-        border: 1px solid #d0d5dd;
-        border-radius: 7px;
+        margin-top: 8px;
+        padding: 13px 14px;
+        color: var(--ink);
+        background: #fbfdfb;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        font: inherit;
         font-size: 15px;
         outline: none;
+        transition: 0.2s ease;
+      }
+
+      input::placeholder {
+        color: #a0aba4;
       }
 
       input:focus {
-        border-color: #222;
-        box-shadow: 0 0 0 2px #2221;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(40, 114, 79, 0.12);
       }
 
       .note {
+        margin-top: 18px;
+        padding: 12px 14px;
+        color: var(--muted);
+        background: #f7faf7;
+        border-left: 3px solid var(--accent);
+        border-radius: 6px;
         font-size: 12px;
-        color: #667085;
-        background: #f8f9fa;
-        border: 1px solid #eaecf0;
-        padding: 9px 11px;
-        border-radius: 7px;
-        margin-top: 8px;
-        line-height: 1.5;
+        line-height: 1.6;
       }
 
       .radio {
         display: flex;
-        gap: 8px;
-        margin: 10px 0;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin: 18px 0 12px;
       }
 
       .radio label {
         display: flex;
         align-items: center;
-        gap: 7px;
-        border: 1px solid #d0d5dd;
-        border-radius: 7px;
-        padding: 8px 12px;
+        gap: 8px;
+        padding: 10px 13px;
+        color: var(--muted);
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 8px;
         cursor: pointer;
-        font-size: 13px;
+        font-size: 12px;
+        letter-spacing: 0;
+        text-transform: none;
       }
 
       .radio input {
         width: auto;
         margin: 0;
+        accent-color: var(--accent);
       }
 
       .radio label:has(input:checked) {
-        background: #222;
-        color: white;
-        border-color: #222;
+        color: var(--accent-dark);
+        background: var(--accent-soft);
+        border-color: #9ac7aa;
       }
 
       .section {
-        background: #fafafa;
-        border: 1px solid #eaecf0;
-        padding: 13px;
-        border-radius: 9px;
-        margin-top: 8px;
+        margin-top: 16px;
+        padding: 20px;
+        background: #fbfdfb;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+      }
+
+      #multipleInput .radio {
+        margin: 8px 0 12px;
+      }
+
+      #ratioBox,
+      #percentBox {
+        grid-column: 3;
+        width: 100%;
+        min-width: 0;
+      }
+
+      #multipleInput .distribution-controls > div input {
+        width: 100%;
+        min-width: 0;
+        padding: 10px 9px;
+        font-size: 13px;
+      }
+
+      #multipleInput .distribution-controls {
+        display: grid;
+        grid-template-columns: minmax(76px, 0.8fr) minmax(54px, 0.6fr) minmax(
+            0,
+            1.6fr
+          );
+        align-items: center;
+      }
+
+      #multipleInput .distribution-controls > label {
+        justify-content: center;
+        min-width: 0;
+        padding-right: 8px;
+        padding-left: 8px;
       }
 
       .calc {
         width: 100%;
-        margin-top: 20px;
-        padding: 12px;
-        border: 0;
-        border-radius: 8px;
-        background: #222;
+        margin-top: 28px;
+        padding: 15px 20px;
         color: #fff;
+        background: var(--accent);
+        border: 0;
+        border-radius: 10px;
         cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: 0.2s ease;
       }
 
       .calc:hover {
-        background: #111;
+        background: var(--accent-dark);
+        transform: translateY(-1px);
       }
 
       .error {
-        color: #b42318;
-        font-weight: bold;
-        margin-top: 12px;
+        margin-top: 14px;
+        color: var(--danger);
         font-size: 13px;
+        font-weight: 700;
+      }
+
+      .ok,
+      .bad {
+        margin-top: 14px;
+        padding: 13px 15px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
       }
 
       .ok {
-        background: #e8f7ed;
-        color: #067647;
-        padding: 11px;
-        border-radius: 8px;
-        margin-top: 12px;
-        font-weight: bold;
-        font-size: 13px;
+        color: #17633d;
+        background: #e8f5ec;
+        border: 1px solid #b9ddc4;
       }
 
       .bad {
-        background: #fdeaea;
-        color: #b42318;
-        padding: 11px;
-        border-radius: 8px;
-        margin-top: 12px;
-        font-weight: bold;
-        font-size: 13px;
+        color: var(--danger);
+        background: #fff0ee;
+        border: 1px solid #f2c2bc;
       }
 
       .table-wrap {
         width: 100%;
+        margin-top: 14px;
         overflow-x: auto;
-        margin-top: 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
       }
 
       table {
         width: 100%;
-        min-width: 760px;
-        border-collapse: collapse;
-        font-size: 13px;
+        min-width: 820px;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 12px;
       }
 
       th,
       td {
-        border: 1px solid #ddd;
-        padding: 9px;
+        padding: 12px 13px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
         text-align: center;
         white-space: nowrap;
       }
 
-      /* TABLE HEADER SAME AS CALCULATE BUTTON */
+      th:last-child,
+      td:last-child {
+        border-right: 0;
+      }
+
+      thead tr:first-child th {
+        border-top: 0;
+      }
 
       th {
-        background: #222;
-        color: #fff;
-        font-weight: bold;
+        color: #000;
+        background: var(--accent-soft);
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        text-transform: none;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      tbody tr:nth-child(even) {
+        background: #ffffff;
+      }
+
+      tbody td {
+        color: #000;
+        background: #f0f8f2;
+        font-size: 19px;
+        font-weight: 600;
+      }
+
+      tbody td,
+      tbody td b {
+        color: #000;
+        /* font-weight: 800; */
       }
 
       .footer {
+        margin-top: 32px;
+        padding-top: 18px;
+        color: #97a49b;
+        border-top: 1px solid var(--line);
+        font-size: 12px;
         text-align: center;
-        color: #98a2b3;
-        font-size: 18px;
-        margin-top: 24px;
-        padding-top: 14px;
-        border-top: 1px solid #eee;
       }
-      .copyright {
-        color: #222;
-      }
-      /* MOBILE */
 
-      @media (max-width: 600px) {
+      .copyright {
+        color: var(--accent-dark);
+        font-weight: 700;
+      }
+
+      @media (max-width: 640px) {
         body {
-          padding: 8px;
+          padding: 12px 8px;
         }
 
         .card {
-          padding: 14px;
-          border-radius: 10px;
-        }
-
-        h1 {
-          font-size: 27px;
-          margin-bottom: 18px;
+          padding: 24px 16px;
+          border-radius: 18px;
         }
 
         .yarn-selector {
-          gap: 8px;
-          margin-bottom: 18px;
+          margin: 24px auto 28px;
         }
 
         .yarn-selector a {
-          padding: 10px 12px;
-          font-size: 15px;
-          border-radius: 8px;
+          padding: 11px 8px;
+          font-size: 12px;
         }
 
         .grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
+          grid-template-columns: 1fr;
+          gap: 14px;
+        }
+
+        .section {
+          padding: 16px;
         }
 
         h2 {
-          font-size: 16px;
-        }
-
-        input {
-          font-size: 14px;
-          padding: 9px 10px;
-        }
-
-        .radio {
-          flex-wrap: wrap;
+          font-size: 19px;
         }
 
         .radio label {
-          padding: 8px 10px;
+          flex: 1 1 130px;
+          justify-content: center;
         }
 
-        .calc {
-          padding: 12px;
+        #ratioBox,
+        #percentBox {
+          grid-column: 3;
+        }
+
+        #multipleInput .distribution-controls {
+          grid-template-columns: minmax(72px, 0.8fr) minmax(48px, 0.6fr) minmax(
+              0,
+              1.6fr
+            );
+          gap: 6px;
+        }
+
+        #multipleInput .distribution-controls > label {
+          padding: 10px 6px;
+        }
+
+        #multipleInput .distribution-controls input[type="radio"] {
+          margin-right: 2px;
         }
       }
     </style>
@@ -324,20 +450,11 @@
     <div class="card">
       <h1>Yarn Calculator</h1>
 
-      <!-- WARP / WEFT -->
-
       <div class="yarn-selector">
         <a href="warp.html" class="active"> Warp Yarn </a>
 
         <a href="weft.html"> Weft Yarn </a>
       </div>
-
-      <!-- 1. TE CALCULATION -->
-
-      <!-- <h2>
-        <span class="number">1</span>
-        TE Calculation
-      </h2> -->
 
       <div class="grid">
         <div>
@@ -367,10 +484,6 @@
             placeholder="TE দিলে → EPI লাগবে না।"
           />
         </div>
-        <!-- <div class="note">
-          TE থাকলে EPI ও Reed Space খালি রাখা যাবে। TE খালি থাকলে EPI + Reed
-          Space দুটোই দিতে হবে।
-        </div> -->
         <div class="">
           <div>
             <label>Total Ball</label>
@@ -380,18 +493,9 @@
         </div>
       </div>
 
-      <!-- 2. TOTAL BALL -->
-
       <div class="note">
         Number of Cone = TE ÷ Total Ball. Decimal 0.5 or more হলে +1 হবে।
       </div>
-
-      <!-- 3. YARN TYPE -->
-
-      <!-- <h2>
-        <span class="number">3</span>
-        Yarn Type
-      </h2> -->
 
       <div class="radio">
         <label>
@@ -416,18 +520,9 @@
         </label>
       </div>
 
-      <!-- SINGLE YARN -->
-
       <div class="section" id="singleInput">
         <h3>Single Yarn</h3>
-
         <div class="grid">
-          <div>
-            <label>Yarn Name</label>
-
-            <input id="singleName" value="10RS" placeholder="10RS" />
-          </div>
-
           <div>
             <label>Yarn Count</label>
 
@@ -442,99 +537,74 @@
         </div>
       </div>
 
-      <!-- MULTIPLE YARN -->
+      <div class="grid">
+        <div>
+          <label>Set Length (Mtr)</label>
+
+          <input id="fabric" type="number" step="any" value="1000" />
+        </div>
+
+        <div>
+          <label>Wastage</label>
+
+          <input id="wastage" type="number" step="any" value="500" />
+        </div>
+      </div>
 
       <div class="section" id="multipleInput" style="display: none">
         <h3>Multiple Yarn</h3>
 
         <div class="grid">
           <div>
-            <label>Yarn Name (comma separated)</label>
-
-            <input id="names" value="10RS,10KW" placeholder="10RS,10KW,12RS" />
-          </div>
-
-          <div>
             <label>Yarn Count (comma separated)</label>
 
             <input id="counts" value="10,10" placeholder="10,10,12" />
           </div>
-        </div>
 
-        <div style="margin-top: 14px">
-          <label>Distribution</label>
+          <div>
+            <label>Distribution</label>
 
-          <div class="radio">
-            <label>
-              <input
-                type="radio"
-                name="dist"
-                value="ratio"
-                checked
-                onchange="distChange()"
-              />
-              Ratio
-            </label>
+            <div class="radio distribution-controls">
+              <label>
+                <input
+                  type="radio"
+                  name="dist"
+                  value="ratio"
+                  checked
+                  onchange="distChange()"
+                />
+                Ratio
+              </label>
 
-            <label>
-              <input
-                type="radio"
-                name="dist"
-                value="percent"
-                onchange="distChange()"
-              />
-              %
-            </label>
+              <label>
+                <input
+                  type="radio"
+                  name="dist"
+                  value="percent"
+                  onchange="distChange()"
+                />
+                %
+              </label>
 
-            <!-- Ratio Input -->
-            <div id="ratioBox">
-              <input
-                id="ratio"
-                value="1:2"
-                placeholder="Ratio দিন, যেমন:1:2 বা 2:4:6"
-              />
-            </div>
+              <div id="ratioBox">
+                <input id="ratio" value="1:2" placeholder="Ratio দিন" />
+              </div>
 
-            <!-- Percentage Input -->
-            <div id="percentBox" style="display: none">
-              <input
-                id="percent"
-                value="33,67"
-                placeholder="Percentage দিন, যেমন: 33,67"
-              />
+              <div id="percentBox" style="display: none">
+                <input
+                  id="percent"
+                  value="33,67"
+                  placeholder="Percentage দিন"
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 4. YARN REQUIREMENT -->
-
-      <!-- <h2>
-        <span class="number">4</span>
-        Yarn Requirement
-      </h2> -->
-
-      <div class="grid">
-        <div>
-          <label>Fabric Length (Meter)</label>
-
-          <input id="fabric" type="number" step="any" value="1000" />
-        </div>
-
-        <div>
-          <label>Wastage (Meter)</label>
-
-          <input id="wastage" type="number" step="any" value="500" />
-        </div>
-      </div>
-
-      <!-- CALCULATE -->
-
       <button class="calc" onclick="calculate()">CALCULATE</button>
 
       <div id="error" class="error"></div>
-
-      <!-- RESULT -->
 
       <div id="result" style="display: none">
         <h2>Final Result</h2>
@@ -610,7 +680,7 @@
 
         if (!total || !fabric || wastage < 0) {
           error.textContent =
-            "Total Ball, Fabric Length এবং Wastage সঠিকভাবে দিন।";
+            "Total Ball, Yarn Length এবং Wastage সঠিকভাবে দিন।";
 
           return;
         }
@@ -649,38 +719,28 @@
 
         const cone = roundHalfUp(TE / total);
 
-        let names = [];
         let counts = [];
         let pct = [];
         let distribution = [];
 
         const type = document.querySelector('input[name="mode"]:checked').value;
 
-        /* SINGLE YARN */
-
         if (type === "single") {
-          const name = document.getElementById("singleName").value.trim();
-
           const count = Number(document.getElementById("singleCount").value);
 
-          if (!name || !count || count <= 0) {
-            error.textContent = "Single Yarn-এর Name এবং Count দিন।";
+          if (!count || count <= 0) {
+            error.textContent = "Single Yarn-এর Count দিন।";
 
             return;
           }
 
-          names = [name];
           counts = [count];
           pct = [100];
         } else {
-          /* MULTIPLE YARN */
-          names = vals(document.getElementById("names").value);
-
           counts = vals(document.getElementById("counts").value).map(Number);
 
-          if (!names.length || names.length !== counts.length) {
-            error.textContent = `Yarn Name ${names.length}টি এবং Count ${counts.length}টি। দুইটার সংখ্যা একই হতে হবে।`;
-
+          if (!counts.length) {
+            error.textContent = "Yarn Count দিন।";
             return;
           }
 
@@ -702,7 +762,7 @@
               .map(Number);
 
             if (
-              distribution.length !== names.length ||
+              distribution.length !== counts.length ||
               distribution.some((x) => !Number.isFinite(x) || x <= 0)
             ) {
               error.textContent =
@@ -718,7 +778,7 @@
             pct = vals(document.getElementById("percent").value).map(Number);
 
             if (
-              pct.length !== names.length ||
+              pct.length !== counts.length ||
               pct.some((x) => !Number.isFinite(x) || x < 0)
             ) {
               error.textContent =
@@ -739,8 +799,6 @@
           }
         }
 
-        /* CONE STATUS */
-
         const st = document.getElementById("coneStatus");
 
         if (cone >= 340 && cone <= 480) {
@@ -759,18 +817,16 @@
 
         tbody.innerHTML = "";
 
-        /* SINGLE RESULT */
-
         if (type === "single") {
           thead.innerHTML = `
           <tr>
-            <th>Yarn</th>
             <th>Count</th>
             <th>Ball</th>
-            <th>Number of Cone</th>
-            <th>Yarn Length (m)</th>
-            <th>Yarn KG</th>
-            <th>Gram</th>
+            <th>Set Length (Mtr)</th>
+            <th>Yarn Length (Meter)</th>
+            <th>Per Cone Weight</th>
+            <th>Requisition Quantity(KG)</th>
+            <th>Number of Cone(Pcs)</th>
           </tr>
         `;
 
@@ -788,53 +844,48 @@
           <tr>
 
             <td>
-              <b>${names[0]}</b>
-            </td>
-
-            <td>
               ${counts[0]}
             </td>
 
             <td>
-              <b>${ball}</b>
+              ${ball}
+            </td>
+            <td>
+              ${yarnLength.toFixed(2)}
+            </td>
+            <td>
+              ${gram.toFixed(2)} g
+            </td>
+            <td>
+              ${fabric.toFixed(0)}
+            </td>
+            <td>
+              ${kg.toFixed(3)}
             </td>
 
             <td>
               ${cone}
             </td>
 
-            <td>
-              ${yarnLength.toFixed(2)}
-            </td>
-
-            <td>
-              ${kg.toFixed(3)}
-            </td>
-
-            <td>
-              <b>${gram.toFixed(2)} g</b>
-            </td>
-
           </tr>
         `;
         } else {
-          /* MULTIPLE RESULT */
           thead.innerHTML = `
           <tr>
-            <th>Yarn</th>
             <th>Count</th>
             <th>Value %</th>
             <th>Ball</th>
-            <th>Cone/Pcs</th>
-            <th>Yarn Length (m)</th>
-            <th>Yarn KG</th>
-            <th>Gram</th>
+            <th>Set Length (Mtr)</th>
+            <th>Yarn Length (Meter)</th>
+            <th>Per Cone Weight</th>
+            <th>Requisition Quantity(KG)</th>
+            <th>Number of Cone(Pcs)</th>
           </tr>
         `;
 
           const constant = 0.00059;
 
-          names.forEach((name, i) => {
+          counts.forEach((count, i) => {
             const ball = roundHalfUp((total * pct[i]) / 100);
 
             const yarnLength = fabric * ball + wastage;
@@ -847,11 +898,7 @@
               <tr>
 
                 <td>
-                  <b>${name}</b>
-                </td>
-
-                <td>
-                  ${counts[i]}
+                  ${count}
                 </td>
 
                 <td>
@@ -859,24 +906,26 @@
                 </td>
 
                 <td>
-                  <b>${ball}</b>
+                  ${ball}
                 </td>
 
+                <td>
+                    ${yarnLength.toFixed(2)}
+                </td>
+                <td>
+                    ${gram.toFixed(2)} g
+                </td>
+
+                <td>
+                    ${fabric.toFixed(0)}
+                </td>
+                <td>
+                    ${kg.toFixed(3)}
+                </td>
                 <td>
                   ${cone}
                 </td>
 
-                <td>
-                  ${yarnLength.toFixed(2)}
-                </td>
-
-                <td>
-                  ${kg.toFixed(3)}
-                </td>
-
-                <td>
-                  <b>${gram.toFixed(2)} g</b>
-                </td>
 
               </tr>
             `;
